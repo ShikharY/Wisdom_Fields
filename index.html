@@ -703,40 +703,40 @@
 						<div style="font-size:24px">🔍</div>
 						<div style="flex:1">
 							<h2 style="margin:0;font-size:20px;color:var(--primary)">Search Practices</h2>
-							<p style="margin:0;font-size:13px;color:var(--muted)">
+							<p id="searchStatus" style="margin:0;font-size:13px;color:var(--muted)">
 								${hasResults ? `Found ${scored.length} practices` : 'Enter keywords to find relevant practices'}
 							</p>
 						</div>
 					</div>
 					<input id="searchInput" class="input" type="search" placeholder="Try: companion planting, water saving, frost protection..." value="${q}" style="font-size:16px" />
 					
-					${q && !hasResults ? `
-						<div style="margin-top:12px;padding:12px;background:rgba(255,193,7,0.1);border-radius:8px;text-align:center">
-							<div style="font-size:24px;margin-bottom:8px">🤔</div>
-							<p style="margin:0;color:var(--muted)"><strong>No matches found for "${q}"</strong></p>
-							<p style="margin:4px 0 0;font-size:12px;color:var(--muted)">Try searching for: soil, water, plants, seasons, or specific techniques</p>
-						</div>
-					` : ''}
+					<div id="searchNoResults" style="margin-top:12px;padding:12px;background:rgba(255,193,7,0.1);border-radius:8px;text-align:center;display:${q && !hasResults ? 'block' : 'none'}">
+						<div style="font-size:24px;margin-bottom:8px">🤔</div>
+						<p style="margin:0;color:var(--muted)"><strong>No matches found for "${q}"</strong></p>
+						<p style="margin:4px 0 0;font-size:12px;color:var(--muted)">Try searching for: soil, water, plants, seasons, or specific techniques</p>
+					</div>
 				</div>
 				
-				${categories.map(c=>{ 
-					const items=grouped[c.id]||[]; 
-					if(!items.length) return ''; 
-					return `
-						<section style="margin-top:12px">
-							<div class="panel" style="background:rgba(255,255,255,.95);border-left:4px solid ${getCategoryColor(c.id)}">
-								<h3 class="section-title" style="display:flex;align-items:center;gap:8px;margin:0 0 12px">
-									<span style="font-size:20px">${c.emoji}</span>
-									${c.name}
-									<span style="font-size:12px;background:${getCategoryColor(c.id)};color:white;padding:2px 8px;border-radius:12px">${items.length}</span>
-								</h3>
-								<div class="list">${items.map(entryCard).join('')}</div>
-							</div>
-						</section>
-					`; 
-				}).join('') || ''}
+				<div id="searchResults">
+					${categories.map(c=>{ 
+						const items=grouped[c.id]||[]; 
+						if(!items.length) return ''; 
+						return `
+							<section style="margin-top:12px">
+								<div class="panel" style="background:rgba(255,255,255,.95);border-left:4px solid ${getCategoryColor(c.id)}">
+									<h3 class="section-title" style="display:flex;align-items:center;gap:8px;margin:0 0 12px">
+										<span style="font-size:20px">${c.emoji}</span>
+										${c.name}
+										<span style="font-size:12px;background:${getCategoryColor(c.id)};color:white;padding:2px 8px;border-radius:12px">${items.length}</span>
+									</h3>
+									<div class="list">${items.map(entryCard).join('')}</div>
+								</div>
+							</section>
+						`; 
+					}).join('') || ''}
+				</div>
 				
-				${!q ? `
+				<div id="searchSuggestions" style="display:${!q ? 'block' : 'none'}">
 					<section class="panel" style="margin-top:12px;background:rgba(255,255,255,.92);text-align:center">
 						<h3 style="color:var(--primary);margin:0 0 12px">💡 Popular Searches</h3>
 						<div class="chips">
@@ -755,7 +755,7 @@
 							</div>
 						</div>
 					</section>
-				` : ''}
+				</div>
 			`;
 			
 			// Focus and setup search input 
@@ -763,15 +763,64 @@
 				const si = document.getElementById('searchInput');
 				if (si) {
 					si.focus();
-					// Handle search input changes
+					// Handle search input changes - just update state and re-render results
 					si.addEventListener('input', (e) => {
+						e.stopPropagation();
 						state.query = e.target.value;
-						const newUrl = state.query ? `#/search?q=${encodeURIComponent(state.query)}` : '#/search';
-						navigate(newUrl);
-						render();
+						// Update results without navigation to prevent losing focus
+						renderSearchResults();
 					});
 				}
 			}, 50);
+		}
+
+		function renderSearchResults() {
+			const q = state.query || '';
+			const scored = data.map(d=>({s:scoreEntry(q,d),d})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).map(x=>x.d);
+			const grouped = groupByCategory(scored);
+			const hasResults = scored.length > 0;
+			
+			// Update search status
+			const statusEl = document.getElementById('searchStatus');
+			if (statusEl) {
+				statusEl.textContent = hasResults ? `Found ${scored.length} practices` : 'Enter keywords to find relevant practices';
+			}
+			
+			// Update no results message
+			const noResultsEl = document.getElementById('searchNoResults');
+			if (noResultsEl) {
+				noResultsEl.style.display = q && !hasResults ? 'block' : 'none';
+				if (q && !hasResults) {
+					noResultsEl.querySelector('strong').textContent = `No matches found for "${q}"`;
+				}
+			}
+			
+			// Update search results
+			const resultsEl = document.getElementById('searchResults');
+			if (resultsEl) {
+				resultsEl.innerHTML = categories.map(c=>{ 
+					const items=grouped[c.id]||[]; 
+					if(!items.length) return ''; 
+					return `
+						<section style="margin-top:12px">
+							<div class="panel" style="background:rgba(255,255,255,.95);border-left:4px solid ${getCategoryColor(c.id)}">
+								<h3 class="section-title" style="display:flex;align-items:center;gap:8px;margin:0 0 12px">
+									<span style="font-size:20px">${c.emoji}</span>
+									${c.name}
+									<span style="font-size:12px;background:${getCategoryColor(c.id)};color:white;padding:2px 8px;border-radius:12px">${items.length}</span>
+								</h3>
+								<div class="list">${items.map(entryCard).join('')}</div>
+							</div>
+						</section>
+					`; 
+				}).join('') || '';
+			}
+			
+			// Update suggestions visibility
+			const suggestionsEl = document.getElementById('searchSuggestions');
+			if (suggestionsEl) {
+				suggestionsEl.style.display = !q ? 'block' : 'none';
+			}
 		}
 
 		function renderCommunity(){ 
