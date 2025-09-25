@@ -56,6 +56,15 @@
 		.group{display:grid;gap:10px}
 		.form-row{display:flex;gap:8px}
 		.form-row>*{flex:1}
+		.subgroup{border-left:4px solid var(--accent);padding-left:12px;margin:16px 0}
+		.subgroup-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:600;color:var(--primary)}
+		.event{background:linear-gradient(135deg, rgba(183,228,199,0.2), rgba(45,106,79,0.1));border:1px solid var(--accent);border-radius:var(--radius);padding:12px;position:relative;overflow:hidden}
+		.event::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom, var(--secondary), var(--accent))}
+		.event-title{font-weight:600;color:var(--primary);margin:0 0 4px;display:flex;align-items:center;gap:6px}
+		.event-meta{color:var(--muted);font-size:12px;margin:4px 0 8px;display:flex;align-items:center;gap:12px}
+		.event-type{background:var(--secondary);color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:500}
+		.announcement{background:rgba(255,236,179,0.3);border:1px solid #F4D03F;border-radius:var(--radius);padding:10px;margin:8px 0}
+		.announcement::before{content:'📢';margin-right:6px}
 		@media (prefers-reduced-motion:no-preference){.cat,.btn,.tab{transition:transform .18s ease,background .18s ease,box-shadow .18s ease}.cat:active,.btn:active{transform:scale(.98)}}
 		@media (min-width:700px){.card-grid{grid-template-columns:repeat(4,1fr)}}
 		:focus{outline:3px solid var(--ring);outline-offset:2px}
@@ -291,7 +300,72 @@
 		function loadProfile(){ try{ return JSON.parse(localStorage.getItem('wf_profile')||'{"name":"","region":""}'); }catch{ return {name:'',region:''}; } }
 
 		function saveCommunity(){ localStorage.setItem('wf_community', JSON.stringify(state.community)); }
-		function loadCommunity(){ try{ return JSON.parse(localStorage.getItem('wf_community')||'{}'); }catch{ return {}; } }
+		function loadCommunity(){ 
+			try{ 
+				const stored = JSON.parse(localStorage.getItem('wf_community')||'{}');
+				// If empty, populate with demo posts
+				if(Object.keys(stored).length === 0) {
+					return {
+						'pacific northwest': [
+							{ text: "Been using the three sisters method this season in Portland - the corn is doing amazing! The beans are really helping with nitrogen. Pro tip: make sure you give the corn a 2-week head start before planting beans.", when: "9/20/2025, 2:30 PM" },
+							{ text: "Started a rain catchment system based on the microcatchments practice. Even with our wet climate, it's amazing how much runoff we were losing! Now my squash beds stay perfectly moist.", when: "9/18/2025, 8:45 AM" },
+							{ text: "My neighbor taught me about using seaweed from the coast as mulch. Game changer! Just rinse the salt off first. The plants are loving the trace minerals.", when: "9/15/2025, 6:20 PM" }
+						],
+						'great plains': [
+							{ text: "Zai pits are working great here in Kansas! Even in this dry year, my tomatoes in the pits are thriving while regular beds are struggling. The key is adding compost to each pit.", when: "9/19/2025, 4:15 PM" },
+							{ text: "Following the phenology advice - planted my winter cover crops when the cottonwoods started turning. Perfect timing! The soil is still warm but nights are cooling.", when: "9/16/2025, 11:30 AM" },
+							{ text: "Cultural burning question - anyone working with local Indigenous groups on prescribed burns? Our prairie restoration project wants to do this right.", when: "9/12/2025, 3:45 PM" }
+						],
+						'sonoran desert': [
+							{ text: "Greywater system from laundry is keeping my food forest alive in Phoenix. Following the guide exactly - biodegradable soap only and rotate the distribution points. Plants are thriving!", when: "9/21/2025, 7:20 AM" },
+							{ text: "Biochar experiment update: mixed it with compost tea like the article suggested. My peppers have never been this productive. The soil stays moist so much longer now.", when: "9/17/2025, 5:10 PM" },
+							{ text: "Native plant corridors are bringing in tons of beneficial insects! Saw three different types of native bees I'd never seen before. The pest problems on my vegetables basically disappeared.", when: "9/14/2025, 9:25 AM" }
+						],
+						'temperate forests': [
+							{ text: "Forest gardening is incredible - planted ginger and mushrooms under my fruit trees following the agroforestry guide. The shade layer is producing more than I expected!", when: "9/22/2025, 1:15 PM" },
+							{ text: "Phenology observation: noticed the red-winged blackbirds are staying later this year. Adjusting my cover crop timing accordingly. Climate change is real - traditional cues are shifting.", when: "9/18/2025, 4:40 PM" },
+							{ text: "Living mulch success story! Comfrey as chop-and-drop is working perfectly. I barely have to water anymore and the soil is so rich and dark now.", when: "9/13/2025, 10:50 AM" }
+						],
+						'mediterranean': [
+							{ text: "Season extension with cold frames working great in Northern California. Growing kale and spinach right through winter now. The thermal mass from water jugs really helps!", when: "9/20/2025, 12:05 PM" },
+							{ text: "Heritage seed saving tip: just harvested my great-grandmother's tomato variety. 4th generation of seeds! Always let them fully ripen on the vine before collecting.", when: "9/16/2025, 6:55 PM" },
+							{ text: "Wildfire prep: created defensible space using the cultural burning principles. Working with local fire department to do controlled burns this fall.", when: "9/11/2025, 2:30 PM" }
+						],
+						'all': [
+							{ text: "New to traditional practices - where should I start? My backyard is small but I want to grow more of my own food sustainably.", when: "9/23/2025, 10:15 AM" },
+							{ text: "Composting question: my pile isn't heating up properly. Should I add more greens or browns? Following the 30:1 carbon:nitrogen ratio but something's off.", when: "9/21/2025, 3:20 PM" },
+							{ text: "Climate change adaptation: anyone else noticing their traditional planting schedules need adjusting? My spring is coming 2 weeks earlier than it used to.", when: "9/19/2025, 8:10 AM" }
+						],
+						'events': [
+							{ type: 'event', title: 'Community Seed Swap', date: 'October 5, 2025', time: '2:00 PM - 5:00 PM', location: 'Central Park Community Garden', description: 'Bring heritage seeds to trade! Focus on climate-adapted varieties and traditional Indigenous crops. Learn about seed saving techniques.', eventType: 'Seed Exchange', organizer: 'Maria Santos' },
+							{ type: 'event', title: 'Traditional Fire Management Workshop', date: 'October 12, 2025', time: '9:00 AM - 4:00 PM', location: 'Prairie Restoration Site, Kansas', description: 'Learn from Indigenous fire practitioners about cultural burning techniques for landscape management. Safety training included.', eventType: 'Workshop', organizer: 'Prairie Nations Council' },
+							{ type: 'event', title: 'Biochar Making Demonstration', date: 'October 18, 2025', time: '10:00 AM - 2:00 PM', location: 'Urban Farm Collective, Phoenix', description: 'Hands-on workshop creating biochar from garden waste. Learn traditional charcoal making adapted for small-scale agriculture.', eventType: 'Workshop', organizer: 'Desert Growers Alliance' },
+							{ type: 'event', title: 'Winter Growing Planning Circle', date: 'October 25, 2025', time: '6:00 PM - 8:00 PM', location: 'Online via Zoom', description: 'Share phenology observations and plan cold-season growing strategies. Open discussion format with regional breakout rooms.', eventType: 'Discussion', organizer: 'Seasonal Growers Network' }
+						],
+						'subgroups': {
+							'fridays-for-future': [
+								{ text: "Young Farmers Climate Action meeting this Friday! We're discussing how to integrate traditional TEK practices into our climate adaptation toolkit. Everyone welcome! 🌱", when: "9/23/2025, 4:20 PM", author: "Alex Chen" },
+								{ text: "Started a school garden using Indigenous three sisters method - teaching other students about sustainable growing. The kids are so excited to see the beans climbing the corn!", when: "9/20/2025, 11:15 AM", author: "Sam Rodriguez" },
+								{ text: "Climate strike planning: showcasing traditional water harvesting techniques as solutions for drought resilience. Ancient wisdom for modern problems! ✊", when: "9/17/2025, 3:30 PM", author: "Jordan Kim" }
+							],
+							'indigenous-led': [
+								{ text: "Reminder: Please respect cultural protocols when discussing sacred practices. Some knowledge is meant to stay within communities. Let's honor that boundary.", when: "9/22/2025, 9:45 AM", author: "Elder Lisa Crow Feather", type: 'announcement' },
+								{ text: "Our tribal seed library is now accepting applications for winter growing varieties. Priority given to Native families and educational partnerships.", when: "9/19/2025, 2:15 PM", author: "Cultural Center Staff" },
+								{ text: "Teaching about controlled burning this weekend at the reservation. Open to allies who want to learn proper protocols and safety measures.", when: "9/16/2025, 5:40 PM", author: "Fire Keeper Tom" }
+							],
+							'urban-growers': [
+								{ text: "Balcony three sisters update: using dwarf corn varieties and bush beans. The container system is working! Happy to share my setup.", when: "9/21/2025, 7:30 PM", author: "Maya Patel" },
+								{ text: "Greywater system installed in my Brooklyn apartment - routing washing machine to container herbs. Building management was surprisingly supportive!", when: "9/18/2025, 6:10 PM", author: "Carlos Washington" },
+								{ text: "Rooftop microcatchment experiment: collected 15 gallons from last week's rain in just basic containers. Scaling up next season!", when: "9/15/2025, 8:25 AM", author: "Zoe Thompson" }
+							]
+						}
+					};
+				}
+				return stored;
+			}catch{ 
+				return {}; 
+			} 
+		}
 
 		function fuzz(t){ return (t||'').toLowerCase(); }
 		function scoreEntry(q,e){ if(!q) return 0; q=fuzz(q); const hay=[e.title,e.summary,e.tags?.join(' '),e.region].map(fuzz).join(' '); let s=0; if(hay.includes(q)) s+=3; if(e.title.toLowerCase().includes(q)) s+=2; if(state.inferredRegion && fuzz(e.region).includes(fuzz(state.inferredRegion))) s+=2; if(state.inferredSeason && fuzz(e.details?.season||'').includes(fuzz(state.inferredSeason))) s+=1; return s; }
@@ -706,7 +780,123 @@
 		function renderCommunity(){ 
 			const region = state.profile.region || state.inferredRegion || ''; 
 			const tips = state.community[region||'all'] || []; 
-			el.app.innerHTML = `<h2 class="section-title">Community</h2><div class="panel group" style="background:rgba(255,255,255,.88)"><div class="form-row"><input id="commRegion" class="input" placeholder="Region (e.g., Sonoran Desert)" value="${region}" aria-label="Region"/><button class="btn" id="useMyLoc">Use my location</button></div><textarea id="commText" class="input" rows="3" placeholder="Share a short practice for this place" aria-label="Share tip"></textarea><button class="btn primary" id="postTip">Post</button></div><section style="margin-top:10px"><h3 class="section-title">What people in this region use</h3><div id="tipList" class="list">${tips.length? tips.map(t=>`<div class="kcard" style="background:rgba(255,255,255,.92)"><p>${t.text}</p><div class="kmeta">${t.when}</div></div>`).join('') : '<div class="panel" style="background:rgba(255,255,255,.88)">No posts yet. Be the first to share.</div>'}</div></section>`; 
+			const events = state.community['events'] || [];
+			const subgroups = state.community['subgroups'] || {};
+			
+			el.app.innerHTML = `
+				<h2 class="section-title">Community</h2>
+				
+				<!-- Upcoming Events -->
+				<section class="panel" style="background:rgba(255,255,255,.88);margin-bottom:16px">
+					<h3 class="section-title" style="margin:0 0 12px;display:flex;align-items:center;gap:8px">
+						📅 Upcoming Events
+					</h3>
+					<div class="list">
+						${events.length ? events.slice(0, 3).map(event => `
+							<div class="event">
+								<div class="event-title">
+									${event.title}
+									<span class="event-type">${event.eventType}</span>
+								</div>
+								<div class="event-meta">
+									<span>📅 ${event.date}</span>
+									<span>⏰ ${event.time}</span>
+									<span>📍 ${event.location}</span>
+								</div>
+								<p style="margin:8px 0 4px;font-size:14px;line-height:1.4">${event.description}</p>
+								<div style="font-size:12px;color:var(--muted)">Organized by ${event.organizer}</div>
+							</div>
+						`).join('') : '<div class="kcard">No upcoming events. Check back soon!</div>'}
+					</div>
+				</section>
+
+				<!-- Sub-groups -->
+				<section class="panel" style="background:rgba(255,255,255,.88);margin-bottom:16px">
+					<h3 class="section-title" style="margin:0 0 12px;display:flex;align-items:center;gap:8px">
+						👥 Community Groups
+					</h3>
+					
+					<div class="subgroup">
+						<div class="subgroup-header">
+							<span>🌍</span>
+							<span>Fridays for Future</span>
+							<span style="background:var(--accent);color:var(--primary);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:500">Youth Climate</span>
+						</div>
+						<div class="list">
+							${subgroups['fridays-for-future'] ? subgroups['fridays-for-future'].slice(0, 2).map(post => `
+								<div class="kcard">
+									<p>${post.text}</p>
+									<div class="kmeta">
+										<span>${post.when}</span>
+										${post.author ? `<span>• by ${post.author}</span>` : ''}
+									</div>
+								</div>
+							`).join('') : '<div class="kcard">Join the youth climate action discussions!</div>'}
+						</div>
+					</div>
+					
+					<div class="subgroup">
+						<div class="subgroup-header">
+							<span>🪶</span>
+							<span>Indigenous-Led Practices</span>
+							<span style="background:var(--secondary);color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:500">Cultural Protocols</span>
+						</div>
+						<div class="list">
+							${subgroups['indigenous-led'] ? subgroups['indigenous-led'].slice(0, 2).map(post => `
+								<div class="kcard${post.type === 'announcement' ? ' announcement' : ''}">
+									<p>${post.text}</p>
+									<div class="kmeta">
+										<span>${post.when}</span>
+										${post.author ? `<span>• by ${post.author}</span>` : ''}
+									</div>
+								</div>
+							`).join('') : '<div class="kcard">Learning from Indigenous knowledge holders.</div>'}
+						</div>
+					</div>
+					
+					<div class="subgroup">
+						<div class="subgroup-header">
+							<span>🏙️</span>
+							<span>Urban Growers</span>
+							<span style="background:#4CAF50;color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:500">Small Spaces</span>
+						</div>
+						<div class="list">
+							${subgroups['urban-growers'] ? subgroups['urban-growers'].slice(0, 2).map(post => `
+								<div class="kcard">
+									<p>${post.text}</p>
+									<div class="kmeta">
+										<span>${post.when}</span>
+										${post.author ? `<span>• by ${post.author}</span>` : ''}
+									</div>
+								</div>
+							`).join('') : '<div class="kcard">Growing food in urban environments!</div>'}
+						</div>
+					</div>
+				</section>
+
+				<!-- Regional Posts -->
+				<div class="panel group" style="background:rgba(255,255,255,.88)">
+					<div class="form-row">
+						<input id="commRegion" class="input" placeholder="Region (e.g., Sonoran Desert)" value="${region}" aria-label="Region"/>
+						<button class="btn" id="useMyLoc">Use my location</button>
+					</div>
+					<textarea id="commText" class="input" rows="3" placeholder="Share a short practice for this place" aria-label="Share tip"></textarea>
+					<button class="btn primary" id="postTip">Post</button>
+				</div>
+				
+				<section style="margin-top:10px">
+					<h3 class="section-title">What people in this region use</h3>
+					<div id="tipList" class="list">
+						${tips.length? tips.map(t=>`
+							<div class="kcard" style="background:rgba(255,255,255,.92)">
+								<p>${t.text}</p>
+								<div class="kmeta">${t.when}</div>
+							</div>
+						`).join('') : '<div class="panel" style="background:rgba(255,255,255,.88)">No posts yet. Be the first to share.</div>'}
+					</div>
+				</section>
+			`; 
+			
 			document.getElementById('postTip').addEventListener('click',()=>{ 
 				const r=document.getElementById('commRegion').value.trim().toLowerCase()||'all'; 
 				const text=document.getElementById('commText').value.trim(); 
