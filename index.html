@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<title>Wisdom Fields — Indigenous Ecological Guidance</title>
+	<meta name="description" content="Phone-first prototype sharing indigenous and place-based ecological guidance for growers, inspired by public NPS resources." />
+	<style>
+		:root{--primary:#1B4332;--secondary:#2D6A4F;--accent:#B7E4C7;--surface-dark:#0B0F0E;--bg:#F7F7F5;--text:#111827;--muted:#6B7280;--ring:#2D6A4F;--card:#FFFFFF;--sep:#E6E6E2;--radius:16px;--shadow:0 1px 2px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.06)}
+		*{box-sizing:border-box}
+		html,body{height:100%}
+		body{margin:0;background:var(--bg) url("./hero.jpg") center/cover fixed no-repeat;color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+		@media (prefers-reduced-motion: reduce){ body{ background-attachment: scroll; } }
+		.container{max-width:900px;margin:0 auto;padding:0 16px}
+		.header{position:sticky;top:0;z-index:5;background:var(--surface-dark);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
+		.header .row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+		.brand{display:flex;gap:10px;align-items:center;font-weight:700}
+		.brand .logo{width:20px;height:20px;border-radius:4px;background:linear-gradient(135deg,var(--secondary),var(--primary))}
+		.actions{display:flex;gap:8px}
+		.icon-btn{appearance:none;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:12px;padding:8px 10px;cursor:pointer}
+		.tabs{display:flex;gap:8px;padding:0 16px 10px}
+		.tab{appearance:none;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
+		.tab[aria-selected="true"]{background:#fff;color:var(--primary);border-color:#fff;font-weight:600}
+		.main{padding:10px 0 96px}
+		.section-title{margin:10px 0 6px;font-size:18px;line-height:1.25;font-weight:600}
+		.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+		.cat{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--card);border:2px solid var(--sep);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);cursor:pointer}
+		.cat .emoji{font-size:28px}
+		.cat .label{font-weight:600;text-align:center}
+		.panel{background:var(--card);border:1px solid var(--sep);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+		.chips{display:flex;flex-wrap:wrap;gap:8px}
+		.chip{background:#EEF4EF;color:var(--secondary);border:1px solid #DCE8DF;border-radius:999px;padding:6px 10px;cursor:pointer;transition:transform 0.15s ease, opacity 0.15s ease}
+		.list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+		.kcard{background:var(--card);border:1px solid var(--sep);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow);transition:transform 0.15s ease, opacity 0.15s ease}
+		.kcard h3{margin:0 0 2px;font-size:16px;line-height:1.3;font-weight:600}
+		.kmeta{color:var(--muted);font-size:13px;margin-bottom:6px}
+		.kbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+		.badge{background:#F0F8F4;border:1px solid #D5EDE0;color:#1B4332;border-radius:8px;padding:2px 8px;font-size:12px}
+		.ktoolbar{display:flex;gap:8px;margin-top:8px}
+		.btn{appearance:none;border:1px solid var(--sep);background:#fff;color:var(--primary);border-radius:10px;padding:8px 12px;cursor:pointer;transition:transform 0.15s ease, opacity 0.15s ease}
+		.btn.primary{background:var(--secondary);border-color:var(--secondary);color:#fff}
+		.btn.icon{display:inline-flex;align-items:center;gap:6px}
+		.disclosure{margin-top:8px;border-top:1px dashed var(--sep);padding-top:8px}
+		.details[hidden]{display:none}
+		.footer{color:var(--muted);font-size:12px;margin-top:6px}
+		.notice{color:var(--muted);font-size:13px}
+		.bottomnav{position:fixed;inset:auto 0 0 0;background:#fff;border-top:1px solid var(--sep);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px 8px;z-index:5}
+		.navbtn{appearance:none;background:#fff;border:1px solid var(--sep);border-radius:12px;padding:8px 0;color:var(--muted);cursor:pointer}
+		.navbtn[aria-current="page"]{background:#E8F4EC;border-color:#CBE6D6;color:var(--secondary);font-weight:600}
+		.fab{position:fixed;right:16px;bottom:96px;display:flex;flex-direction:column;gap:10px;z-index:5}
+		.fab button{appearance:none;border:none;border-radius:999px;padding:14px;background:var(--primary);color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.18);cursor:pointer}
+		.fab .secondary{background:var(--secondary)}
+		.searchbar{display:none}
+		.searchbar.active{display:block}
+		.input{width:100%;padding:10px 12px;border:1px solid var(--sep);border-radius:12px;background:#fff}
+		.group{display:grid;gap:10px}
+		.form-row{display:flex;gap:8px}
+		.form-row>*{flex:1}
+		@media (prefers-reduced-motion:no-preference){.cat,.btn,.tab{transition:transform .18s ease,background .18s ease,box-shadow .18s ease}.cat:active,.btn:active{transform:scale(.98)}}
+		@media (min-width:700px){.card-grid{grid-template-columns:repeat(4,1fr)}}
+		:focus{outline:3px solid var(--ring);outline-offset:2px}
+	</style>
+</head>
+<body>
+	<header class="header" role="banner">
+		<div class="row container">
+			<div class="brand"><div class="logo" aria-hidden="true"></div><div>Wisdom Fields</div></div>
+			<div class="actions" role="navigation" aria-label="Header">
+				<button class="icon-btn" id="openSaved" aria-label="Open bookmarks">★</button>
+			</div>
+		</div>
+		<nav class="tabs container" aria-label="Primary">
+			<button class="tab" data-tab="home" aria-selected="true">Home</button>
+			<button class="tab" data-tab="category">Browse</button>
+			<button class="tab" data-tab="search">Search</button>
+		</nav>
+	</header>
+
+	<main class="main container" id="app" role="main"></main>
+
+	<nav class="bottomnav" aria-label="App">
+		<button class="navbtn" data-nav="home" aria-current="page">Home</button>
+		<button class="navbtn" data-nav="saved">Saved</button>
+		<button class="navbtn" data-nav="community">Community</button>
+		<button class="navbtn" data-nav="profile">Profile</button>
+	</nav>
+
+	<div class="fab" aria-live="polite">
+		<button id="fabSearch" title="Search" aria-label="Search">🔎</button>
+		<button id="fabSaved" class="secondary" title="Bookmarks" aria-label="Bookmarks">🔖</button>
+	</div>
+
+	<script>
+	(function(){
+		const el={ app:document.getElementById('app'), openSaved:document.getElementById('openSaved'), fabSearch:document.getElementById('fabSearch'), fabSaved:document.getElementById('fabSaved'), tabs:document.querySelectorAll('.tab'), nav:document.querySelectorAll('.navbtn') };
+
+		// Global click handler to prevent duplicate event listeners
+		let globalClickHandlerAttached = false;
+		let clickDebounceMap = new Map();
+		
+		function addClickFeedback(element) {
+			element.style.transform = 'scale(0.95)';
+			element.style.opacity = '0.7';
+			setTimeout(() => {
+				element.style.transform = '';
+				element.style.opacity = '';
+			}, 150);
+		}
+		
+		function setupGlobalClickHandler() {
+			if (globalClickHandlerAttached) return;
+			globalClickHandlerAttached = true;
+			
+			// Debounced click handler to prevent double-click issues
+			el.app.addEventListener('click', (e) => {
+				const target = e.target.closest('button, a, [data-cat], [data-chip], [data-search], .save, .share, .details-toggle');
+				if (!target) return;
+				
+				// Allow external links to work normally
+				if (target.tagName === 'A' && target.hasAttribute('href') && target.getAttribute('href').startsWith('http')) {
+					addClickFeedback(target);
+					return; // Don't prevent default for external links
+				}
+				
+				// Create a unique key for this specific element
+				const elementKey = target.id || target.className + target.textContent.slice(0, 20);
+				
+				// Check if this element was clicked recently
+				if (clickDebounceMap.has(elementKey)) {
+					e.preventDefault();
+					e.stopPropagation();
+					return; // Ignore rapid successive clicks
+				}
+				
+				// Add visual feedback
+				addClickFeedback(target);
+				
+				// Mark this element as clicked
+				clickDebounceMap.set(elementKey, true);
+				setTimeout(() => clickDebounceMap.delete(elementKey), 300);
+				
+				e.preventDefault();
+				e.stopPropagation();
+				
+				// Handle category navigation
+				if (target.hasAttribute('data-cat')) {
+					const catId = target.getAttribute('data-cat');
+					state.view = 'category';
+					state.currentCat = catId;
+					navigate('#/category/' + catId);
+					render();
+					return;
+				}
+				
+				// Handle search chips
+				if (target.hasAttribute('data-chip')) {
+					const query = target.getAttribute('data-chip');
+					state.query = query;
+					state.view = 'search';
+					navigate('#/search?q=' + encodeURIComponent(query));
+					render();
+					return;
+				}
+				
+				// Handle search suggestions
+				if (target.hasAttribute('data-search')) {
+					const query = target.getAttribute('data-search');
+					state.query = query;
+					state.view = 'search';
+					navigate('#/search?q=' + encodeURIComponent(query));
+					render();
+					return;
+				}
+				
+				// Handle back button
+				if (target.id === 'backHome') {
+					state.view = 'home';
+					navigate('#/');
+					render();
+					return;
+				}
+				
+				// Handle save button
+				if (target.classList.contains('save')) {
+					const card = target.closest('.kcard');
+					if (card) {
+						const id = card.getAttribute('data-id');
+						toggleSave(id);
+					}
+					return;
+				}
+				
+				// Handle share button
+				if (target.classList.contains('share')) {
+					const card = target.closest('.kcard');
+					if (card) {
+						const id = card.getAttribute('data-id');
+						const entry = data.find(d => d.id === id);
+						if (entry) shareEntry(entry);
+					}
+					return;
+				}
+				
+				// Handle details toggle
+				if (target.classList.contains('details-toggle')) {
+					const controlsId = target.getAttribute('aria-controls');
+					const section = document.getElementById(controlsId);
+					if (section) {
+						const expanded = target.getAttribute('aria-expanded') === 'true';
+						target.setAttribute('aria-expanded', String(!expanded));
+						section.hidden = expanded;
+					}
+					return;
+				}
+			});
+		}
+
+		const categories=[
+			{ id:'soil', name:'Soil & Compost', emoji:'🪱', chips:['soil health','biochar','compost','mulching','fertility','organic matter','soil biology','carbon sequestration','soil building'] },
+			{ id:'water', name:'Water & Drought', emoji:'💧', chips:['low-water','rain capture','mulch','microcatchments','greywater','water conservation','drought tolerance','irrigation','water recycling'] },
+			{ id:'biodiversity', name:'Biodiversity & Pest Balance', emoji:'🦋', chips:['pollinators','beneficials','native species','interplanting','companion planting','beneficial insects','habitat','pest management','polyculture'] },
+			{ id:'climate', name:'Climate Resilience & Seasonality', emoji:'🌿', chips:['season extension','frost','phenology','burning','cold protection','microclimate','winter growing','climate adaptation'] }
+		];
+
+		const data=[
+			{ id:'three-sisters', cat:'biodiversity', title:'Three Sisters: Corn • Beans • Squash', summary:'Interplant corn for support, beans for nitrogen, and squash for living mulch to conserve moisture and suppress weeds.', details:{ rationale:'Polycultures increase resilience and soil function. This ancient system maximizes yield while building soil health through complementary plant relationships.', steps:['Plant corn when soils warm to 18°C in spring.','Sow beans at 15–20 cm corn height for climbing support.','Plant squash at mound edges to shade soil and deter pests.','Mulch pathways with organic matter to reduce evaporation.','Harvest corn when kernels dent, beans when pods dry, squash when stems harden.'], risks:['Requires 1.5m spacing; monitor corn for adequate light.','Watch for squash vine borer in late summer.'], season:'Spring–Summer' }, tags:['Indigenous practice','Companion planting','Soil health'], region:'Great Plains; Eastern Woodlands', sourceTitle:'International Traditional Ecological Knowledge — NPS', source:'https://www.nps.gov/subjects/tek/international-across-borders.htm' },
+			{ id:'biochar-compost', cat:'soil', title:'Biochar blended with compost', summary:'Charge biochar with compost or teas, then incorporate lightly to improve nutrient retention and water holding capacity.', details:{ rationale:'Inspired by Amazonian dark earths; stable carbon aids cation exchange and provides habitat for beneficial microorganisms.', steps:['Use clean, fully quenched biochar from hardwood sources.','Charge with compost tea or diluted fish emulsion for 24 hours.','Blend 1:3 ratio biochar to compost before application.','Apply 2-5cm layer under perennials or work into top 10cm of beds.','Water thoroughly after application to activate microbial activity.'], risks:['Monitor soil pH; biochar can be alkaline.','Start with small amounts and adjust rates gradually.','Avoid fresh, uncharged biochar which can lock up nutrients.'], season:'Spring–Autumn' }, tags:['NPS guidance','Soil health','Carbon sequestration'], region:'Amazon; Temperate farms', sourceTitle:'South American Traditional Knowledge — NPS', source:'https://www.nps.gov/subjects/tek/south-america.htm' },
+			{ id:'microcatchments', cat:'water', title:'Rain-harvesting microcatchments', summary:'Shallow basins on contour concentrate rainfall and organic matter near plant roots for successful dryland growing.', details:{ rationale:'Slows, spreads, and sinks water to reduce runoff and erosion while increasing soil infiltration by up to 300%.', steps:['Survey slope and mark contour lines using A-frame level.','Dig crescent-shaped basins 30-60cm wide, 15cm deep.','Add 5-10cm compost or aged manure in each basin.','Plant drought-tolerant crops or perennials within basins.','Create small berms or stone lines to guide overflow between catchments.','Mulch heavily around plantings to reduce evaporation.'], risks:['Avoid directing water toward buildings or foundations.','Size catchments for 50-year storm events.','Maintain spillways to prevent washouts.'], season:'Spring–Summer' }, tags:['Low-water gardening','Rain capture','Permaculture'], region:'Drylands; Sonoran Desert; Mediterranean', sourceTitle:'Ancient Cooling Techniques — The Conversation', source:'https://theconversation.com/5-lessons-from-ancient-civilizations-for-keeping-homes-cool-in-hot-dry-climates-237741' },
+			{ id:'phenology', cat:'climate', title:'Phenology cues for seasonal timing', summary:'Use local indicators like bird migrations and plant flowering to align planting and harvest with natural ecological rhythms.', details:{ rationale:'Phenology connects farm tasks to living seasonal calendars, often more reliable than fixed dates as climate shifts.', steps:['Identify 5-10 indicator species native to your area.','Record first leaf, first bloom, and migration dates annually.','Plant warm-season crops when oak leaves reach squirrel-ear size.','Start cool-season planting when migratory birds return.','Time harvest windows with local fruit ripening cycles.','Adjust planting dates based on 3-year observation trends.'], risks:['Phenology indicators vary by microclimate and elevation.','Climate change may disrupt traditional timing relationships.'], season:'All seasons' }, tags:['Seasonality','Indigenous practice','Climate adaptation'], region:'Pacific Northwest; Great Lakes; Coastal regions', sourceTitle:'Traditional Ecological Knowledge Applications — NPS', source:'https://www.nps.gov/subjects/tek/tek-applications2.htm' },
+			{ id:'cold-protection', cat:'climate', title:'Frost protection with windbreaks & season extension', summary:'Use shelterbelts, thermal mass, and protective structures to reduce frost damage and extend growing seasons.', details:{ rationale:'Wind and radiative heat loss are primary causes of frost damage; barriers and covers can raise temperatures 2-5°C.', steps:['Plant windbreak rows of evergreens perpendicular to winter winds.','Install water barrels or stone walls for thermal mass near tender plants.','Mulch perennials 10-15cm deep before first hard freeze.','Use row covers or low tunnels with 6mm plastic sheeting.','Create microclimates with south-facing walls and sheltered courtyards.','Harvest hardy greens throughout winter from protected beds.'], risks:['Vent covers on sunny days to prevent overheating above 25°C.','Remove mulch gradually in spring to allow soil warming.'], season:'Autumn–Spring' }, tags:['Season extension','Microclimate','Winter growing'], region:'Boreal; High elevation; Continental climates', sourceTitle:'Indigenous Climate Knowledge — Forbes', source:'https://www.forbes.com/sites/davidbressan/2017/07/05/indigenous-knowledge-helps-scientists-to-assess-climate-change/' },
+			{ id:'agroforestry', cat:'biodiversity', title:'Agroforestry systems & forest gardening', summary:'Integrate trees with annual crops to create productive, resilient food systems that mimic natural forest ecosystems.', details:{ rationale:'Tree-crop integration increases biodiversity, improves water cycling, and provides multiple harvest layers while reducing pest pressure.', steps:['Design canopy, understory, shrub, herbaceous, and root crop layers.','Plant nitrogen-fixing trees (legumes) on contour every 8-12 meters.','Establish fruiting trees and nut trees as long-term anchors.','Prune regularly and use cuttings as mulch and compost material.','Grow shade-tolerant crops like ginger, mushrooms, and leafy greens beneath.','Integrate chickens or other livestock for pest control and fertility.'], risks:['Manage tree pruning to prevent excessive shading of sun crops.','Plan tree placement to avoid root competition with annuals.'], season:'Spring–Autumn' }, tags:['Agroforestry','Polyculture','Forest gardening'], region:'Tropics; Temperate forests; Savanna zones', sourceTitle:'Indigenous Traditional Ecological Knowledge in Agroforestry — USDA', source:'https://www.fs.usda.gov/research/treesearch/47452' },
+			{ id:'seaweed-fish', cat:'soil', title:'Marine-based nutrients for coastal gardens', summary:'Sustainably harvest and process seaweed and fish waste as slow-release, mineral-rich fertilizers for heavy-feeding crops.', details:{ rationale:'Marine inputs provide trace minerals often lacking in terrestrial soils, plus growth hormones and beneficial microorganisms.', steps:['Harvest seaweed below high tide line following local regulations.','Rinse thoroughly with fresh water to remove excess salt.','Compost seaweed with brown materials at 3:1 ratio for 6-8 weeks.','Bury fish scraps 30cm deep in dedicated compost trenches.','Apply aged seaweed compost around tomatoes, squash, and corn.','Use liquid seaweed extract as foliar spray every 2 weeks.'], risks:['Respect Indigenous harvesting rights and local quotas.','Bury fish waste securely to prevent attracting raccoons and bears.','Test soil salinity if using large quantities of seaweed.'], season:'Spring–Autumn' }, tags:['Coastal gardening','Marine nutrients','Sustainable harvesting'], region:'Pacific Northwest; Atlantic coast; Great Lakes', sourceTitle:'Indigenous Seaweed Cultivation — Mongabay', source:'https://news.mongabay.com/2022/01/by-cultivating-seaweed-indigenous-communities-restore-connection-to-the-ocean/' },
+			{ id:'cultural-burning', cat:'biodiversity', title:'Cultural fire practices for landscape renewal', summary:'Implement low-intensity prescribed burns under Indigenous leadership to reduce fire risk, support biodiversity, and renew ecosystems.', details:{ rationale:'Cultural burning creates mosaic landscapes, reduces catastrophic wildfire risk, and maintains fire-adapted species diversity.', steps:['Partner with trained Indigenous fire practitioners and cultural leaders.','Develop burn plans with tribal consultation and government permits.','Conduct cool-season burns under optimal weather conditions.','Create firebreaks and water access for safety protocols.','Monitor post-fire recovery and adjust future burn cycles.','Integrate grazing and selective harvesting in burn rotation.'], risks:['Never attempt burning without proper training, permits, and Indigenous guidance.','Ensure adequate firebreaks and emergency response plans.','Follow all local air quality and safety regulations.'], season:'Late autumn–Early spring' }, tags:['Traditional burning','Fire ecology','Cultural protocols'], region:'California chaparral; Great Plains; Pine-oak forests', sourceTitle:'Native Knowledge: Fire Management — Yale Environment 360', source:'https://e360.yale.edu/features/native-knowledge-what-ecologists-are-learning-from-indigenous-people' },
+			{ id:'mulch', cat:'soil', title:'Living mulch & organic ground covers', summary:'Establish diverse organic mulches and living ground covers to build soil, conserve moisture, and create beneficial habitat.', details:{ rationale:'Mulch systems mimic forest floors, feeding soil organisms while regulating temperature and moisture for optimal plant growth.', steps:['Layer diverse materials: leaves, straw, wood chips, and green prunings.','Maintain 5-10cm depth, keeping mulch 5cm away from plant stems.','Plant dynamic accumulators like comfrey as chop-and-drop mulch sources.','Establish clover or other nitrogen-fixing living mulches between rows.','Add fresh materials seasonally as lower layers decompose.','Create habitat corridors with mulched pathways for beneficial insects.'], risks:['Monitor for rodent nesting in thick mulch layers during winter.','Avoid disease-prone materials like infected fruit tree prunings.','Pull mulch back from crowns in wet climates to prevent rot.'], season:'All seasons' }, tags:['Living mulch','Soil building','Beneficial habitat'], region:'Temperate; Mediterranean; Subtropical zones', sourceTitle:'Traditional Forest Knowledge — USDA Forest Service', source:'https://www.fs.usda.gov/research/treesearch/47879' },
+			{ id:'microbes-compost', cat:'soil', title:'Aerobic composting & soil biology', summary:'Create thermophilic compost systems that cultivate beneficial microorganisms essential for healthy, living soil ecosystems.', details:{ rationale:'Active compost systems produce stable humus while multiplying beneficial bacteria, fungi, and other soil organisms that enhance plant health.', steps:['Build piles with 30:1 carbon to nitrogen ratio using diverse materials.','Layer greens (kitchen scraps, fresh grass) with browns (dried leaves, paper).','Maintain moisture like a wrung-out sponge, turning weekly for aeration.','Monitor internal temperature; optimal range is 55-70°C for pathogen control.','Finish compost when materials are dark, crumbly, and earth-scented.','Screen finished compost and use immediately or store covered.'], risks:['Avoid meat, dairy, oils, and pet waste which attract pests.','Turn piles regularly to prevent anaerobic conditions and odors.','Allow compost to cure for 2-4 weeks before applying to prevent nitrogen burn.'], season:'All seasons' }, tags:['Composting','Soil biology','Organic matter'], region:'All climates', sourceTitle:'International Traditional Ecological Knowledge — NPS', source:'https://www.nps.gov/subjects/tek/international-across-borders.htm' },
+			{ id:'indigenous-seeds', cat:'biodiversity', title:'Heritage seed saving & native varieties', summary:'Preserve locally-adapted seed varieties and support Indigenous seed sovereignty through community seed libraries and exchanges.', details:{ rationale:'Heritage seeds carry genetic diversity adapted to local conditions and cultural foodways, increasing resilience to climate change.', steps:['Source seeds from Indigenous seed keepers and heritage varieties.','Learn proper seed harvesting timing for each crop species.','Practice open-pollination techniques and avoid hybrid varieties.','Store seeds in cool, dry conditions with proper labeling and dates.','Participate in community seed swaps and maintain diverse varieties.','Document growing conditions and adaptation observations annually.'], risks:['Respect Indigenous intellectual property and cultural protocols around sacred seeds.','Avoid cross-contamination between varieties through proper isolation.','Test germination rates before relying on older stored seeds.'], season:'Late summer–Autumn for harvest; Spring for planting' }, tags:['Seed sovereignty','Heritage varieties','Cultural preservation'], region:'All regions with Indigenous presence', sourceTitle:'Native Seeds/SEARCH — Seed Conservation Organization', source:'https://www.nativeseeds.org/' },
+			{ id:'insect-habitat', cat:'biodiversity', title:'Beneficial insect habitat & native plant corridors', summary:'Design pollinator gardens and beneficial insect habitat using native plants to support natural pest management and ecosystem health.', details:{ rationale:'Native plant communities support 50x more beneficial insects than non-native landscapes, providing natural pest control and pollination services.', steps:['Plant native flowers that bloom in succession throughout the growing season.','Include plants with diverse flower shapes for different beneficial insects.','Maintain some wild areas with brush piles and overwintering habitat.','Avoid pesticides and herbicides that harm beneficial species.','Plant native trees and shrubs as nesting sites for native bees.','Create water sources with shallow edges and landing spots for insects.'], risks:['Research which native plants may become aggressive in garden settings.','Balance pest habitat with beneficial habitat through diverse plantings.'], season:'Spring planting; year-round habitat maintenance' }, tags:['Pollinator habitat','Native plants','Beneficial insects'], region:'All ecoregions', sourceTitle:'Protecting Indigenous Cultures for Biodiversity — The Conversation', source:'https://theconversation.com/protecting-indigenous-cultures-is-crucial-for-saving-the-worlds-biodiversity-123716' },
+			{ id:'greywater', cat:'water', title:'Greywater systems & water recycling', summary:'Design simple greywater systems to capture and reuse household water for irrigation while protecting groundwater quality.', details:{ rationale:'Greywater reuse can reduce household water consumption by 30-50% while providing nutrients for food production systems.', steps:['Install simple laundry-to-landscape systems with minimal pumps.','Use biodegradable soaps and avoid fabric softeners and bleach.','Direct greywater through mulch basins before reaching plant roots.','Rotate distribution points to prevent soil saturation and salt buildup.','Plant appropriate species that tolerate soap residues and fluctuating moisture.','Maintain systems with regular filter cleaning and pipe inspection.'], risks:['Follow local health codes and obtain permits where required.','Never use water from toilets, diaper washing, or kitchen sinks with meat residues.','Avoid storing greywater which can breed harmful bacteria.'], season:'Year-round system maintenance' }, tags:['Water recycling','Greywater','Sustainable systems'], region:'Arid and semi-arid regions; Water-conscious communities', sourceTitle:'Traditional Wisdom for Climate Change — Inside Science', source:'https://www.insidescience.org/news/tapping-traditional-wisdom-cope-climate-change' },
+			{ id:'season-extension', cat:'climate', title:'Season extension with cold frames & greenhouses', summary:'Build simple season extension structures to grow food year-round using passive solar design and thermal mass principles.', details:{ rationale:'Season extension structures can add 2-6 months to the growing season while reducing heating costs through passive solar design.', steps:['Site structures facing south with protection from north winds.','Build cold frames using recycled windows angled at 45-degree slope.','Add thermal mass like water barrels or stones to moderate temperature swings.','Use row covers and low tunnels for temporary protection during cold snaps.','Ventilate automatically using temperature-sensitive vent openers.','Grow cold-hardy crops like kale, spinach, and carrots for winter harvest.'], risks:['Monitor temperature extremes; vent during sunny winter days to prevent overheating.','Secure structures against wind damage with proper anchoring.'], season:'Autumn setup; winter growing; spring transition' }, tags:['Season extension','Passive solar','Winter growing'], region:'Temperate zones; Continental climates', sourceTitle:'Weathering Uncertainty: Traditional Knowledge for Climate Change — UNESCO', source:'https://unesdoc.unesco.org/ark:/48223/pf0000216613.locale=en' }
+		];
+
+		const state={ view:'home', currentCat:null, query:'', bookmarks:loadBookmarks(), inferredRegion:'', inferredSeason:'', profile:loadProfile(), community:loadCommunity() };
+
+		function saveBookmarks(){ localStorage.setItem('wf_bookmarks', JSON.stringify(state.bookmarks)); }
+		function loadBookmarks(){ 
+			try{ 
+				const saved = JSON.parse(localStorage.getItem('wf_bookmarks')||'[]');
+				// Add some demo bookmarks if none exist
+				if (saved.length === 0) {
+					return ['three-sisters', 'mulch', 'indigenous-seeds'];
+				}
+				return saved;
+			}catch{ 
+				return ['three-sisters', 'mulch']; // Demo bookmarks as fallback
+			} 
+		}
+		function isSaved(id){ return state.bookmarks.includes(id); }
+		function toggleSave(id){ const i=state.bookmarks.indexOf(id); if(i>=0) state.bookmarks.splice(i,1); else state.bookmarks.push(id); saveBookmarks(); render(); }
+
+		function saveProfile(){ localStorage.setItem('wf_profile', JSON.stringify(state.profile)); }
+		function loadProfile(){ try{ return JSON.parse(localStorage.getItem('wf_profile')||'{"name":"","region":""}'); }catch{ return {name:'',region:''}; } }
+
+		function saveCommunity(){ localStorage.setItem('wf_community', JSON.stringify(state.community)); }
+		function loadCommunity(){ try{ return JSON.parse(localStorage.getItem('wf_community')||'{}'); }catch{ return {}; } }
+
+		function fuzz(t){ return (t||'').toLowerCase(); }
+		function scoreEntry(q,e){ if(!q) return 0; q=fuzz(q); const hay=[e.title,e.summary,e.tags?.join(' '),e.region].map(fuzz).join(' '); let s=0; if(hay.includes(q)) s+=3; if(e.title.toLowerCase().includes(q)) s+=2; if(state.inferredRegion && fuzz(e.region).includes(fuzz(state.inferredRegion))) s+=2; if(state.inferredSeason && fuzz(e.details?.season||'').includes(fuzz(state.inferredSeason))) s+=1; return s; }
+
+		function groupByCategory(items){ const map={}; for(const c of categories) map[c.id]=[]; for(const it of items){ if(!map[it.cat]) map[it.cat]=[]; map[it.cat].push(it); } return map; }
+
+		function renderHome(){
+			el.app.innerHTML = `
+				<section class="panel" style="margin-top:12px;background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(247,247,245,0.9));border:2px solid var(--accent);box-shadow:0 4px 20px rgba(0,0,0,0.1)">
+					<div style="text-align:center;margin-bottom:16px">
+						<h1 style="margin:0 0 8px;font-size:24px;color:var(--primary);font-weight:700">🌱 Wisdom Fields</h1>
+						<p style="margin:0;color:var(--muted);font-size:14px;line-height:1.4">Traditional Ecological Knowledge for regenerative growing<br>
+						<em>Honoring Indigenous wisdom • Building resilient food systems</em></p>
+					</div>
+					<div style="background:rgba(27,67,50,0.05);border-radius:12px;padding:12px;margin-bottom:16px;border-left:4px solid var(--secondary)">
+						<p style="margin:0;font-size:13px;color:var(--primary);font-weight:500">
+							<strong>🤝 Ethical Note:</strong> These practices represent generalized Indigenous ecological knowledge shared through public resources. 
+							For local application, please consult and partner with Indigenous knowledge holders in your region.
+						</p>
+					</div>
+				</section>
+				
+				<section class="panel" style="margin-top:12px;background:rgba(255,255,255,.92)">
+					<h2 class="section-title">🌿 Explore by Challenge</h2>
+					<p style="margin:0 0 12px;color:var(--muted);font-size:14px">Choose your growing challenge to discover time-tested solutions</p>
+					<div class="card-grid" role="list" aria-label="Problem categories">
+						${categories.map(c=>`
+							<button class="cat" data-cat="${c.id}" role="listitem" aria-label="${c.name}" style="transition:all 0.2s ease;position:relative;overflow:hidden">
+								<div style="position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(135deg, ${getCategoryGradient(c.id)});opacity:0.1;border-radius:14px"></div>
+								<div class="emoji" aria-hidden="true" style="font-size:32px;margin-bottom:4px">${c.emoji}</div>
+								<div class="label" style="position:relative;z-index:1">${c.name}</div>
+								<div style="position:relative;z-index:1;font-size:11px;color:var(--muted);margin-top:4px;text-align:center">${getEntryCount(c.id)} practices</div>
+							</button>
+						`).join('')}
+					</div>
+				</section>
+				
+				<section class="panel" style="margin-top:12px;background:rgba(255,255,255,.92)">
+					<h2 class="section-title">🔍 Quick Start</h2>
+					<div class="chips" style="margin-bottom:12px">
+						${getPopularSearches().map(term=>`<button class="chip" data-search="${term}" style="background:var(--accent);color:var(--primary);border:none;font-weight:500">${term}</button>`).join('')}
+					</div>
+					<p style="margin:0;color:var(--muted);font-size:13px;text-align:center">
+						💡 <strong>Try searching:</strong> "companion planting", "water saving", "frost protection", or "soil building"
+					</p>
+				</section>
+				
+				<section style="margin-top:12px;text-align:center;color:var(--muted);font-size:12px;line-height:1.4">
+					<p style="margin:8px 0">
+						📚 Content sourced from <strong>U.S. National Park Service</strong> Traditional Ecological Knowledge resources<br>
+						🌍 Supporting Indigenous-led conservation and food sovereignty
+					</p>
+				</section>
+			`;
+		}
+		
+		function getCategoryGradient(catId) {
+			const gradients = {
+				soil: '#8B4513, #D2691E',
+				water: '#4682B4, #87CEEB', 
+				biodiversity: '#228B22, #90EE90',
+				climate: '#2E8B57, #98FB98'
+			};
+			return gradients[catId] || '#888, #AAA';
+		}
+		
+		function getEntryCount(catId) {
+			return data.filter(d => d.cat === catId).length;
+		}
+		
+		function getPopularSearches() {
+			return ['three sisters', 'mulch', 'rain water', 'composting', 'frost protection', 'native plants'];
+		}
+
+		function renderCategory(){
+			const cat = categories.find(c=>c.id===state.currentCat) || categories[0];
+			const entries = data.filter(d=>d.cat===cat.id);
+			const beginnerEntries = entries.filter(e => e.tags.includes('Beginner friendly') || ['mulch', 'microbes-compost', 'three-sisters'].includes(e.id));
+			const advancedEntries = entries.filter(e => !beginnerEntries.includes(e));
+			
+			el.app.innerHTML = `
+				<div style="margin-top:12px">
+					<button class="btn" aria-label="Back to home" id="backHome" style="margin-bottom:12px">← Back to Categories</button>
+					
+					<div class="panel" style="background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(247,247,245,0.9));border:2px solid ${getCategoryColor(cat.id)};margin-bottom:12px">
+						<div style="text-align:center;margin-bottom:12px">
+							<div style="font-size:48px;margin-bottom:8px">${cat.emoji}</div>
+							<h2 style="margin:0 0 6px;font-size:22px;color:var(--primary)">${cat.name}</h2>
+							<p style="margin:0;color:var(--muted);font-size:14px">${entries.length} practices • ${getCategoryDescription(cat.id)}</p>
+						</div>
+						
+						<div style="background:rgba(255,255,255,0.7);border-radius:8px;padding:10px;margin-bottom:12px">
+							<p style="margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:600">🏷️ Browse by topic:</p>
+							<div class="chips" role="list">
+								${cat.chips.map(t=>`<button role="listitem" class="chip" data-chip="${t}" style="font-size:12px">${t}</button>`).join('')}
+							</div>
+						</div>
+					</div>
+					
+					${beginnerEntries.length > 0 ? `
+						<section style="margin-bottom:16px">
+							<h3 class="section-title" style="display:flex;align-items:center;gap:8px;color:var(--secondary)">
+								🌱 Getting Started
+								<span style="font-size:12px;background:var(--accent);color:var(--primary);padding:2px 8px;border-radius:12px;font-weight:normal">Beginner Friendly</span>
+							</h3>
+							<div class="list">${beginnerEntries.map(entryCard).join('')}</div>
+						</section>
+					` : ''}
+					
+					${advancedEntries.length > 0 ? `
+						<section>
+							<h3 class="section-title" style="color:var(--primary)">🎯 Advanced Practices</h3>
+							<div class="list">${advancedEntries.map(entryCard).join('')}</div>
+						</section>
+					` : ''}
+				</div>
+			`;
+			
+			// Event handlers now managed by global click handler
+		}
+		
+		function getCategoryColor(catId) {
+			const colors = {
+				soil: '#8B4513',
+				water: '#4682B4', 
+				biodiversity: '#228B22',
+				climate: '#2E8B57'
+			};
+			return colors[catId] || 'var(--secondary)';
+		}
+		
+		function getCategoryDescription(catId) {
+			const descriptions = {
+				soil: 'Build healthy, living soil ecosystems',
+				water: 'Conserve and harvest water sustainably', 
+				biodiversity: 'Support beneficial species and natural balance',
+				climate: 'Adapt to changing seasons and weather patterns'
+			};
+			return descriptions[catId] || 'Sustainable growing practices';
+		}
+
+		function entryCard(e){
+			const difficultyLevel = getDifficultyLevel(e);
+			const seasonIcon = getSeasonIcon(e.details.season);
+			const regionFlag = getRegionFlag(e.region);
+			
+			return `
+				<article class="kcard" data-id="${e.id}" style="border-left:4px solid ${getCategoryColor(e.cat)};position:relative;overflow:hidden">
+					<div style="position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:4px">
+						<span style="font-size:16px">${seasonIcon}</span>
+						<span style="font-size:14px">${regionFlag}</span>
+					</div>
+					
+					<div style="margin-right:60px">
+						<h3 style="margin:0 0 4px;line-height:1.2;color:var(--primary)">${e.title}</h3>
+						<div class="kmeta" style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+							<span>${e.region}</span>
+							<span>•</span>
+							<span>${e.details.season}</span>
+							<span>•</span>
+							<span style="display:flex;align-items:center;gap:3px">
+								${getDifficultyStars(difficultyLevel)}
+								<span style="font-size:11px">${difficultyLevel}</span>
+							</span>
+						</div>
+					</div>
+					
+					<p style="margin:0 0 10px;line-height:1.4">${e.summary}</p>
+					
+					<div class="kbadges" style="margin:8px 0">
+						${(e.tags||[]).slice(0,4).map(t=>`<span class="badge" style="font-size:11px">${t}</span>`).join('')}
+						${e.tags && e.tags.length > 4 ? `<span class="badge" style="font-size:11px;background:var(--muted);color:white">+${e.tags.length-4} more</span>` : ''}
+					</div>
+					
+					<div class="ktoolbar" style="flex-wrap:wrap;gap:6px">
+						<button class="btn icon save" aria-label="${isSaved(e.id) ? 'Remove from saved' : 'Save this practice'}" style="font-size:13px;padding:6px 10px">
+							${isSaved(e.id)?'★ Saved':'☆ Save'}
+						</button>
+						<button class="btn icon share" aria-label="Share this practice" style="font-size:13px;padding:6px 10px">📤 Share</button>
+						<a class="btn" target="_blank" rel="noopener noreferrer" href="${e.source}" style="font-size:13px;padding:6px 10px">🔗 Source</a>
+						<button class="btn details-toggle" aria-expanded="false" aria-controls="det-${e.id}" style="font-size:13px;padding:6px 10px;background:var(--accent);border-color:var(--accent);color:var(--primary)">
+							📖 View Details
+						</button>
+					</div>
+					
+					<div id="det-${e.id}" class="details" hidden>
+						<div class="disclosure" style="background:rgba(247,247,245,0.5);border-radius:8px;padding:12px;margin-top:12px">
+							<div style="margin-bottom:12px">
+								<h4 style="margin:0 0 6px;font-size:14px;color:var(--primary);display:flex;align-items:center;gap:6px">
+									🎯 Why This Works
+								</h4>
+								<p style="margin:0;font-size:13px;line-height:1.4">${e.details.rationale}</p>
+							</div>
+							
+							<div style="margin-bottom:12px">
+								<h4 style="margin:0 0 8px;font-size:14px;color:var(--primary);display:flex;align-items:center;gap:6px">
+									📋 Step-by-Step Guide
+								</h4>
+								<ol style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">
+									${(e.details.steps||[]).map(s=>`<li style="margin-bottom:4px">${s}</li>`).join('')}
+								</ol>
+							</div>
+							
+							${e.details.risks?.length ? `
+								<div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:6px;padding:8px;margin-bottom:12px">
+									<h4 style="margin:0 0 6px;font-size:13px;color:#B8860B;display:flex;align-items:center;gap:6px">
+										⚠️ Important Considerations
+									</h4>
+									<ul style="margin:0;padding-left:16px;font-size:12px;color:#8B6914">
+										${e.details.risks.map(r=>`<li style="margin-bottom:2px">${r}</li>`).join('')}
+									</ul>
+								</div>
+							` : ''}
+							
+							<div style="border-top:1px dashed var(--sep);padding-top:8px">
+								<p class="footer" style="margin:0;font-size:11px;color:var(--muted);text-align:center">
+									📚 <strong>Attribution:</strong> ${e.sourceTitle} — 
+									<a target="_blank" rel="noopener noreferrer" href="${e.source}" style="color:var(--secondary)">National Park Service</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</article>`;
+		}
+		
+		function getDifficultyLevel(entry) {
+			const beginner = ['mulch', 'microbes-compost', 'three-sisters', 'indigenous-seeds'];
+			const advanced = ['cultural-burning', 'greywater', 'season-extension'];
+			
+			if (beginner.includes(entry.id)) return 'Beginner';
+			if (advanced.includes(entry.id)) return 'Advanced';
+			return 'Intermediate';
+		}
+		
+		function getDifficultyStars(level) {
+			const stars = { 'Beginner': '⭐', 'Intermediate': '⭐⭐', 'Advanced': '⭐⭐⭐' };
+			return stars[level] || '⭐⭐';
+		}
+		
+		function getSeasonIcon(season) {
+			if (season.includes('Spring')) return '🌸';
+			if (season.includes('Summer')) return '☀️';
+			if (season.includes('Autumn')) return '🍂';
+			if (season.includes('Winter')) return '❄️';
+			return '🗓️';
+		}
+		
+		function getRegionFlag(region) {
+			if (region.includes('Pacific Northwest')) return '🏔️';
+			if (region.includes('Desert') || region.includes('Arid')) return '🏜️';
+			if (region.includes('Plains')) return '🌾';
+			if (region.includes('Coastal')) return '🌊';
+			if (region.includes('Tropics')) return '🌴';
+			if (region.includes('Boreal') || region.includes('Arctic')) return '🌲';
+			return '🌍';
+		}
+
+		function wireAccordions(root){ 
+			// No longer needed - handled by global click handler
+		}
+
+		async function shareEntry(entry){ const url=location.origin+location.pathname+'#/'+state.view+'?id='+encodeURIComponent(entry.id); const text=`${entry.title} — ${entry.summary}`; try{ if(navigator.share){ await navigator.share({ title: entry.title, text, url }); } else { await navigator.clipboard.writeText(url); alert('Sharable link copied'); } }catch{} }
+
+		function wireCardButtons(root){ 
+			// No longer needed - handled by global click handler
+		}
+
+		function renderSaved(){ 
+			const items=data.filter(d=>state.bookmarks.includes(d.id)); 
+			
+			el.app.innerHTML=`
+				<div class="panel" style="margin-top:12px;background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(247,247,245,0.9));border:2px solid #FFD700;text-align:center">
+					<div style="font-size:32px;margin-bottom:8px">⭐</div>
+					<h2 style="margin:0 0 4px;color:var(--primary)">Saved Practices</h2>
+					<p style="margin:0;color:var(--muted);font-size:14px">
+						${items.length > 0 ? `${items.length} practices saved for later` : 'Save practices to build your personal collection'}
+					</p>
+				</div>
+				
+				${items.length > 0 ? `
+					<div style="margin-top:12px">
+						<div class="list">${items.map(entryCard).join('')}</div>
+					</div>
+				` : `
+					<div class="panel" style="margin-top:12px;background:rgba(255,255,255,.92);text-align:center">
+						<div style="font-size:48px;margin-bottom:12px;opacity:0.5">📚</div>
+						<h3 style="color:var(--primary);margin:0 0 8px">No saved practices yet</h3>
+						<p style="color:var(--muted);margin:0 0 16px;font-size:14px">
+							Discover and save practices that are relevant to your growing conditions and interests.
+						</p>
+						
+						<div style="display:grid;gap:8px">
+							<button class="btn primary" onclick="navigate('#/'); state.view='home'; render();" style="display:flex;align-items:center;justify-content:center;gap:8px">
+								<span>🏠</span> Explore Categories
+							</button>
+							<button class="btn" onclick="navigate('#/search'); state.view='search'; render();" style="display:flex;align-items:center;justify-content:center;gap:8px">
+								<span>🔍</span> Search Practices
+							</button>
+						</div>
+						
+						<div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--sep)">
+							<h4 style="color:var(--secondary);margin:0 0 8px;font-size:14px">💡 Try These Popular Practices</h4>
+							<div style="display:grid;gap:6px;font-size:13px">
+								${['three-sisters', 'mulch', 'microbes-compost'].map(id => {
+									const practice = data.find(d => d.id === id);
+									return practice ? `
+										<button class="chip" onclick="toggleSave('${id}'); render();" style="background:var(--accent);color:var(--primary);border:none;padding:8px 12px;text-align:left">
+											<strong>${practice.title}</strong><br>
+											<span style="font-size:11px;opacity:0.8">${practice.summary.slice(0,60)}...</span>
+										</button>
+									` : '';
+								}).join('')}
+							</div>
+						</div>
+					</div>
+				`}
+			`;
+			
+			// Event handlers now managed by global click handler
+		}
+
+		function renderSearch(){ 
+			const q=state.query||''; 
+			const scored=data.map(d=>({s:scoreEntry(q,d),d})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).map(x=>x.d); 
+			const grouped=groupByCategory(scored);
+			const hasResults = scored.length > 0;
+			
+			el.app.innerHTML=`
+				<div class="panel" style="margin-top:12px;background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(247,247,245,0.9));border:2px solid var(--secondary)">
+					<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+						<div style="font-size:24px">🔍</div>
+						<div style="flex:1">
+							<h2 style="margin:0;font-size:20px;color:var(--primary)">Search Practices</h2>
+							<p style="margin:0;font-size:13px;color:var(--muted)">
+								${hasResults ? `Found ${scored.length} practices` : 'Enter keywords to find relevant practices'}
+							</p>
+						</div>
+					</div>
+					<input id="searchInput" class="input" type="search" placeholder="Try: companion planting, water saving, frost protection..." value="${q}" style="font-size:16px" autofocus />
+					
+					${q && !hasResults ? `
+						<div style="margin-top:12px;padding:12px;background:rgba(255,193,7,0.1);border-radius:8px;text-align:center">
+							<div style="font-size:24px;margin-bottom:8px">🤔</div>
+							<p style="margin:0;color:var(--muted)"><strong>No matches found for "${q}"</strong></p>
+							<p style="margin:4px 0 0;font-size:12px;color:var(--muted)">Try searching for: soil, water, plants, seasons, or specific techniques</p>
+						</div>
+					` : ''}
+				</div>
+				
+				${categories.map(c=>{ 
+					const items=grouped[c.id]||[]; 
+					if(!items.length) return ''; 
+					return `
+						<section style="margin-top:12px">
+							<div class="panel" style="background:rgba(255,255,255,.95);border-left:4px solid ${getCategoryColor(c.id)}">
+								<h3 class="section-title" style="display:flex;align-items:center;gap:8px;margin:0 0 12px">
+									<span style="font-size:20px">${c.emoji}</span>
+									${c.name}
+									<span style="font-size:12px;background:${getCategoryColor(c.id)};color:white;padding:2px 8px;border-radius:12px">${items.length}</span>
+								</h3>
+								<div class="list">${items.map(entryCard).join('')}</div>
+							</div>
+						</section>
+					`; 
+				}).join('') || ''}
+				
+				${!q ? `
+					<section class="panel" style="margin-top:12px;background:rgba(255,255,255,.92);text-align:center">
+						<h3 style="color:var(--primary);margin:0 0 12px">💡 Popular Searches</h3>
+						<div class="chips">
+							${getPopularSearches().map(term=>`<button class="chip" data-search="${term}" style="background:var(--accent);color:var(--primary);border:none">${term}</button>`).join('')}
+						</div>
+						
+						<div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--sep)">
+							<h4 style="color:var(--secondary);margin:0 0 8px;font-size:14px">🏷️ Browse by Category</h4>
+							<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+								${categories.map(c=>`
+									<button class="btn" data-cat="${c.id}" style="display:flex;align-items:center;gap:6px;font-size:13px;text-align:left">
+										<span>${c.emoji}</span>
+										<span>${c.name}</span>
+									</button>
+								`).join('')}
+							</div>
+						</div>
+					</section>
+				` : ''}
+			`;
+			
+			const si=document.getElementById('searchInput'); 
+			si.addEventListener('input',()=>{ 
+				state.query=si.value; 
+				render(); 
+			});
+			
+			// Wire up popular searches
+			el.app.querySelectorAll('[data-search]').forEach(btn=>btn.addEventListener('click',()=>{ 
+				state.query = btn.getAttribute('data-search'); 
+				render(); 
+			}));
+			
+			// Wire up category buttons
+			el.app.querySelectorAll('[data-cat]').forEach(btn=>btn.addEventListener('click',()=>{ 
+				state.view='category'; 
+				state.currentCat=btn.getAttribute('data-cat'); 
+				navigate('#/category/'+state.currentCat); 
+				render(); 
+			}));
+			
+			// Event handlers now managed by global click handler
+		}
+
+		function renderCommunity(){ 
+			const region = state.profile.region || state.inferredRegion || ''; 
+			const tips = state.community[region||'all'] || []; 
+			el.app.innerHTML = `<h2 class="section-title">Community</h2><div class="panel group" style="background:rgba(255,255,255,.88)"><div class="form-row"><input id="commRegion" class="input" placeholder="Region (e.g., Sonoran Desert)" value="${region}" aria-label="Region"/><button class="btn" id="useMyLoc">Use my location</button></div><textarea id="commText" class="input" rows="3" placeholder="Share a short practice for this place" aria-label="Share tip"></textarea><button class="btn primary" id="postTip">Post</button></div><section style="margin-top:10px"><h3 class="section-title">What people in this region use</h3><div id="tipList" class="list">${tips.length? tips.map(t=>`<div class="kcard" style="background:rgba(255,255,255,.92)"><p>${t.text}</p><div class="kmeta">${t.when}</div></div>`).join('') : '<div class="panel" style="background:rgba(255,255,255,.88)">No posts yet. Be the first to share.</div>'}</div></section>`; 
+			document.getElementById('postTip').addEventListener('click',()=>{ 
+				const r=document.getElementById('commRegion').value.trim().toLowerCase()||'all'; 
+				const text=document.getElementById('commText').value.trim(); 
+				if(!text) return; 
+				const list=state.community[r]||[]; 
+				list.unshift({ text, when: new Date().toLocaleString() }); 
+				state.community[r]=list; 
+				saveCommunity(); 
+				navigate('#/community?region='+encodeURIComponent(r)); 
+				render(); 
+			}); 
+			document.getElementById('useMyLoc').addEventListener('click',()=>geoToRegion(document.getElementById('commRegion'))); 
+		}
+
+		function renderProfile(){ 
+			el.app.innerHTML = `<h2 class="section-title">Profile</h2><div class="panel group" style="background:rgba(255,255,255,.88)"><input id="profName" class="input" placeholder="Your name" value="${state.profile.name||''}" aria-label="Your name"/><div class="form-row"><input id="profRegion" class="input" placeholder="Your region (e.g., Great Plains)" value="${state.profile.region||''}" aria-label="Your region"/><button class="btn" id="profUseLoc">Use my location</button></div><button class="btn primary" id="saveProfile">Save</button><p class="notice">We store your profile only in this browser (localStorage).</p></div>`; 
+			document.getElementById('saveProfile').addEventListener('click',()=>{ 
+				state.profile.name=document.getElementById('profName').value.trim(); 
+				state.profile.region=document.getElementById('profRegion').value.trim(); 
+				saveProfile(); 
+				alert('Saved'); 
+			}); 
+			document.getElementById('profUseLoc').addEventListener('click',()=>geoToRegion(document.getElementById('profRegion'))); 
+		}
+
+		function navigate(hash){ if(location.hash!==hash) location.hash=hash; }
+		function parseHash(){ const h=location.hash.replace(/^#\//,''); const [path,qstr]=''+h.split('?'); const params=new URLSearchParams(qstr||''); return { path:path||'', params }; }
+
+		function render(){ 
+			// Initialize global click handler on first render
+			setupGlobalClickHandler();
+			
+			el.nav.forEach(n=>n.setAttribute('aria-current', n.dataset.nav===state.view?'page':'false')); 
+			el.tabs.forEach(t=>t.setAttribute('aria-selected', t.dataset.tab===state.view?'true':'false')); 
+			if(state.view==='home'){ 
+				renderHome(); 
+			} else if(state.view==='category'){ 
+				renderCategory(); 
+			} else if(state.view==='saved'){ 
+				renderSaved(); 
+			} else if(state.view==='search'){ 
+				renderSearch(); 
+			} else if(state.view==='community'){ 
+				renderCommunity(); 
+			} else if(state.view==='profile'){ 
+				renderProfile(); 
+			} 
+		}
+
+		// Navigation
+		el.tabs.forEach(t=>t.addEventListener('click',()=>{ 
+			state.view=t.dataset.tab==='category'?'category':t.dataset.tab; 
+			if(state.view==='category'&&!state.currentCat) state.currentCat=categories[0].id; 
+			navigate('#/'+state.view); 
+			render(); 
+		}));
+		el.nav.forEach(n=>n.addEventListener('click',()=>{ 
+			const target=n.dataset.nav; 
+			state.view=target; 
+			if(target==='home') navigate('#/'); 
+			else navigate('#/'+target); 
+			if(target==='category'&&!state.currentCat) state.currentCat=categories[0].id; 
+			render(); 
+		}));
+		el.openSaved.addEventListener('click',()=>{ state.view='saved'; navigate('#/saved'); render(); });
+		el.fabSaved.addEventListener('click',()=>{ state.view='saved'; navigate('#/saved'); render(); });
+		el.fabSearch.addEventListener('click',()=>{ state.view='search'; navigate('#/search'); render(); });
+
+		// Geolocation helpers
+		async function reverseGeocode(lat,lon){ 
+			try{ 
+				const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`); 
+				const j=await r.json(); 
+				const a=j.address||{}; 
+				return [a.city||a.town||a.village||a.hamlet,a.state||a.region,a.country].filter(Boolean).join(', '); 
+			}catch{
+				return '';
+			} 
+		}
+		
+		function inferSeason(lat){ 
+			const m=(new Date()).getUTCMonth(); 
+			const north=lat>=0; 
+			return north?(m<=1?'Winter':m<=4?'Spring':m<=7?'Summer':m<=10?'Autumn':'Winter'):(m<=1?'Summer':m<=4?'Autumn':m<=7?'Winter':m<=10?'Spring':'Summer'); 
+		}
+		
+		async function geoToRegion(inputEl){ 
+			if(!navigator.geolocation) return; 
+			navigator.geolocation.getCurrentPosition(async pos=>{ 
+				const lat=pos.coords.latitude, lon=pos.coords.longitude; 
+				const label=await reverseGeocode(lat,lon); 
+				inputEl.value=label||(`${lat.toFixed(4)}, ${lon.toFixed(4)}`); 
+				state.inferredSeason=inferSeason(lat); 
+				state.inferredRegion=(label||'').toLowerCase(); 
+			},()=>{}, {maximumAge:3e5,timeout:8e3}); 
+		}
+		
+		(function personalize(){ 
+			if(!navigator.geolocation) return; 
+			navigator.geolocation.getCurrentPosition(async pos=>{ 
+				const lat=pos.coords.latitude, lon=pos.coords.longitude; 
+				const label=await reverseGeocode(lat,lon); 
+				state.inferredSeason=inferSeason(lat); 
+				state.inferredRegion=(label||'').toLowerCase(); 
+			},()=>{}, {maximumAge:3e5,timeout:8e3}); 
+		})();
+
+		// Deep-linking
+		window.addEventListener('hashchange',()=>{ 
+			const {path,params}=parseHash(); 
+			if(path.startsWith('category/')){ 
+				state.currentCat=path.split('/')[1]; 
+				state.view='category'; 
+			} else if(path==='search'){ 
+				state.view='search'; 
+				state.query=params.get('q')||''; 
+			} else if(path==='saved'){ 
+				state.view='saved'; 
+			} else if(path==='community'){ 
+				state.view='community'; 
+			} else if(path==='profile'){ 
+				state.view='profile'; 
+			} else { 
+				state.view='home'; 
+			} 
+			render(); 
+		});
+		
+		// Initial route
+		(function initRoute(){ 
+			const {path,params}=parseHash(); 
+			if(path.startsWith('category/')){ 
+				state.currentCat=path.split('/')[1]; 
+				state.view='category'; 
+			} else if(path==='search'){ 
+				state.view='search'; 
+				state.query=params.get('q')||''; 
+			} else if(path==='saved'){ 
+				state.view='saved'; 
+			} else if(path==='community'){ 
+				state.view='community'; 
+			} else if(path==='profile'){ 
+				state.view='profile'; 
+			} else { 
+				state.view='home'; 
+			} 
+			render(); 
+		})();
+	})();
+	</script>
+</body>
+</html>

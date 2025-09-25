@@ -1,0 +1,108 @@
+[
+  {
+    "title": "Three Sisters: Corn, Beans, Squash",
+    "region": "Great Plains; Eastern Woodlands",
+    "seasons": ["Spring", "Summer"],
+    "topics": ["corn", "beans", "squash", "companion planting", "soil fertility", "polyculture"],
+    "summary": "Interplant corn, beans, and squash. Corn provides structure, beans fix nitrogen, squash shades soil, reducing evaporation and weeds.",
+    "practices": [
+      "Mound soil and plant corn first once soil warms.",
+      "Add beans around corn after it stands 15–20 cm to climb and fix nitrogen.",
+      "Plant squash on mound edges to shade soil and suppress weeds.",
+      "Mulch with organic residues to conserve moisture.",
+      "Stagger sowing for season length and frost timing."
+    ]
+  },
+  {
+    "title": "Zai pits and water harvesting microcatchments",
+    "region": "Drylands; Sahel; Sonoran Desert",
+    "seasons": ["Spring", "Summer"],
+    "topics": ["water saving", "dry soils", "erosion", "rain capture", "microcatchments"],
+    "summary": "Small basins concentrate runoff and organic matter near roots, improving infiltration and yields in arid and semi-arid landscapes.",
+    "practices": [
+      "Dig shallow pits or crescent basins on contour before rains.",
+      "Add compost or manure into pits to build soil life.",
+      "Plant drought-tolerant crops or perennials within basins.",
+      "Guide runoff with small berms; keep pathways mulched.",
+      "Combine with rock lines or brush weirs to slow water."
+    ]
+  },
+  {
+    "title": "Seasonal calendars and phenology cues",
+    "region": "Pacific Northwest; Aotearoa; Coastal regions",
+    "seasons": ["Spring", "Autumn", "Summer", "Winter"],
+    "topics": ["seasonal timing", "phenology", "harvest", "planting windows"],
+    "summary": "Use local indicators (first salmon run, flowering of specific shrubs, bird migrations) to time planting and harvest, aligning with ecological rhythms.",
+    "practices": [
+      "Observe indicator species to trigger tasks (e.g., plant when a native tree blooms).",
+      "Adjust for microclimate; valleys and slopes differ.",
+      "Record your observations to refine local timing over years.",
+      "Pair with lunar cycles only if culturally appropriate and informed."
+    ]
+  },
+  {
+    "title": "Cold protection with low tunnels and living snow fences",
+    "region": "Arctic; Boreal; High elevation",
+    "seasons": ["Autumn", "Winter", "Spring"],
+    "topics": ["frost", "windbreaks", "season extension", "cold frames"],
+    "summary": "Use snow as an insulator and create wind barriers. Low tunnels and mulches buffer frost and extend seasons.",
+    "practices": [
+      "Plant shelterbelts or brush rows to reduce wind and trap snow.",
+      "Mulch perennials heavily before hard freezes.",
+      "Use simple low tunnels or cold frames for hardy greens.",
+      "Site plantings on south-facing aspects for more sun."
+    ]
+  },
+  {
+    "title": "Agroforestry: alley cropping and edible understories",
+    "region": "Tropics; Temperate forests",
+    "seasons": ["Spring", "Summer", "Autumn"],
+    "topics": ["agroforestry", "shade", "soil", "diversity", "mulch"],
+    "summary": "Integrate trees with crops. Trees provide shade, mulch, habitat, and water cycling benefits while crops occupy light gaps.",
+    "practices": [
+      "Plant nitrogen-fixing trees on contour; prune for mulch.",
+      "Grow shade-tolerant crops in alleys or understory.",
+      "Use fallen leaves and prunings as surface mulch.",
+      "Diversify species to spread risk and support pollinators."
+    ]
+  },
+  {
+    "title": "Soil building with biochar and compost",
+    "region": "Amazon; Temperate farms",
+    "seasons": ["Spring", "Summer", "Autumn"],
+    "topics": ["soil", "biochar", "compost", "fertility", "carbon"],
+    "summary": "Stabilized charcoal (biochar) mixed with compost improves nutrient retention and water holding, inspired by Amazonian dark earths.",
+    "practices": [
+      "Use clean, fully quenched biochar; charge it with compost or manure tea before application.",
+      "Incorporate lightly into topsoil or use as mulch under perennials.",
+      "Monitor pH and moisture; adjust rates gradually.",
+      "Combine with diverse organic inputs for balanced fertility."
+    ]
+  },
+  {
+    "title": "Fish and seaweed as nutrient sources",
+    "region": "Coastal; Pacific Northwest; Māori horticulture",
+    "seasons": ["Spring", "Autumn"],
+    "topics": ["nutrients", "fertility", "soil", "seaweed", "fish"],
+    "summary": "Use fish scraps and seaweed as slow-release nutrients. Rinse seaweed and compost fish to avoid pests.",
+    "practices": [
+      "Rinse seaweed to remove excess salts; compost or use as surface mulch.",
+      "Bury fish waste deeply or compost in sealed bins to deter animals.",
+      "Apply in planting holes for heavy feeders like corn or squash.",
+      "Respect local regulations and cultural protocols for harvest."
+    ]
+  },
+  {
+    "title": "Managed burns for renewal and pest control (contextual)",
+    "region": "Grasslands; Savannas; Woodlands",
+    "seasons": ["Autumn", "Winter", "Spring"],
+    "topics": ["pests", "renewal", "fuel reduction", "habitat"],
+    "summary": "Cultural burning can renew landscapes, reduce pests and disease, and support habitat. Requires training, permits, and cultural leadership.",
+    "practices": [
+      "Work with trained cultural fire practitioners and local authorities.",
+      "Use cool-season burns under safe conditions as part of a plan.",
+      "Integrate grazing and mosaic burns to protect biodiversity.",
+      "Never attempt burns without proper governance and consent."
+    ]
+  }
+]
