@@ -112,8 +112,8 @@
 			globalClickHandlerAttached = true;
 			
 			// Debounced click handler to prevent double-click issues
-			el.app.addEventListener('click', (e) => {
-				const target = e.target.closest('button, a, [data-cat], [data-chip], [data-search], .save, .share, .details-toggle');
+			document.addEventListener('click', (e) => {
+				const target = e.target.closest('button, a, [data-cat], [data-chip], [data-search], [data-nav-tab], [data-nav-btn], [data-nav-action], .save, .share, .details-toggle');
 				if (!target) return;
 				
 				// Allow external links to work normally
@@ -141,6 +141,36 @@
 				
 				e.preventDefault();
 				e.stopPropagation();
+				
+				// Handle navigation tabs
+				if (target.hasAttribute('data-nav-tab')) {
+					const tabView = target.getAttribute('data-nav-tab');
+					state.view = tabView === 'category' ? 'category' : tabView;
+					if (state.view === 'category' && !state.currentCat) state.currentCat = categories[0].id;
+					navigate('#/' + state.view);
+					render();
+					return;
+				}
+				
+				// Handle navigation buttons
+				if (target.hasAttribute('data-nav-btn')) {
+					const navTarget = target.getAttribute('data-nav-btn');
+					state.view = navTarget;
+					if (navTarget === 'home') navigate('#/');
+					else navigate('#/' + navTarget);
+					if (navTarget === 'category' && !state.currentCat) state.currentCat = categories[0].id;
+					render();
+					return;
+				}
+				
+				// Handle navigation actions (FABs, etc.)
+				if (target.hasAttribute('data-nav-action')) {
+					const action = target.getAttribute('data-nav-action');
+					state.view = action;
+					navigate('#/' + action);
+					render();
+					return;
+				}
 				
 				// Handle category navigation
 				if (target.hasAttribute('data-cat')) {
@@ -726,24 +756,34 @@
 			} 
 		}
 
-		// Navigation
-		el.tabs.forEach(t=>t.addEventListener('click',()=>{ 
-			state.view=t.dataset.tab==='category'?'category':t.dataset.tab; 
-			if(state.view==='category'&&!state.currentCat) state.currentCat=categories[0].id; 
-			navigate('#/'+state.view); 
-			render(); 
-		}));
-		el.nav.forEach(n=>n.addEventListener('click',()=>{ 
-			const target=n.dataset.nav; 
-			state.view=target; 
-			if(target==='home') navigate('#/'); 
-			else navigate('#/'+target); 
-			if(target==='category'&&!state.currentCat) state.currentCat=categories[0].id; 
-			render(); 
-		}));
-		el.openSaved.addEventListener('click',()=>{ state.view='saved'; navigate('#/saved'); render(); });
-		el.fabSaved.addEventListener('click',()=>{ state.view='saved'; navigate('#/saved'); render(); });
-		el.fabSearch.addEventListener('click',()=>{ state.view='search'; navigate('#/search'); render(); });
+		// Navigation - handled by global click handler
+		// Note: Individual event listeners removed to prevent conflicts
+		
+		// Initialize navigation with data attributes for global handler
+		el.tabs.forEach(t => {
+			if (!t.hasAttribute('data-nav-tab')) {
+				t.setAttribute('data-nav-tab', t.dataset.tab);
+			}
+		});
+		el.nav.forEach(n => {
+			if (!n.hasAttribute('data-nav-btn')) {
+				n.setAttribute('data-nav-btn', n.dataset.nav);
+			}
+		});
+		
+		// Only attach these specific handlers that aren't covered by global handler
+		if (!el.openSaved.hasAttribute('data-handled')) {
+			el.openSaved.setAttribute('data-handled', 'true');
+			el.openSaved.setAttribute('data-nav-action', 'saved');
+		}
+		if (!el.fabSaved.hasAttribute('data-handled')) {
+			el.fabSaved.setAttribute('data-handled', 'true');
+			el.fabSaved.setAttribute('data-nav-action', 'saved');
+		}
+		if (!el.fabSearch.hasAttribute('data-handled')) {
+			el.fabSearch.setAttribute('data-handled', 'true');
+			el.fabSearch.setAttribute('data-nav-action', 'search');
+		}
 
 		// Geolocation helpers
 		async function reverseGeocode(lat,lon){ 
